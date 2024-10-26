@@ -80,7 +80,7 @@ void addMatrix(int m1[SIZE][SIZE], int m2[SIZE][SIZE], int result[SIZE][SIZE]){
 
 // multiply m1 and m2 to result
 void multiplyMatrix(int m1[SIZE][SIZE], int m2[SIZE][SIZE], int result[SIZE][SIZE]){
-    //check requirements for multiplication
+    // check requirements for multiplication
     // square matricies are... always going to be multiplicable?
     int m1Rows = SIZE;
     int m2Cols = SIZE;
