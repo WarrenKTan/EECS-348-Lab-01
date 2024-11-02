@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cmath>
+#include <iomanip>
 
 using namespace std;
 
@@ -60,12 +62,26 @@ class Matrix {
 
         // 2. Display a matrix
         void display() const{
-            string spacing;
+            // get max integer in matrix
+            int max = data[0][0];
+            for (int row = 0; row < SIZE; row++){
+                for (int col = 0; col < SIZE; col++){
+                    if (max < data[row][col]){
+                        max = data[row][col];
+                    }
+                }
+            }
+            
+            // adjust width based off max integer
+            int width = 0;
+            while (pow(10, width) < max)
+                width++;
+            width++;
 
             // iterate by row and column
             for (int row = 0; row < SIZE; row++){
                 for (int col = 0; col < SIZE; col++){
-                    printf("%-3d",data[row][col]);
+                    cout << left << setw(width) << data[row][col];
                 }
                 cout << endl;
             }
@@ -73,40 +89,69 @@ class Matrix {
 
         // 3. Add two matrices (operator overloading for +)
         Matrix operator+(const Matrix& other) const{
-            Matrix out;
-
             // iterate by row and column
+            Matrix out;
             for (int row = 0; row < SIZE; row++){
                 for (int col = 0; col < SIZE; col++){
                     out.data[row][col] = data[row][col] + other.data[row][col];
-                    // printf("%d + %d\n", this->data[row][col], other.data[row][col]);
                 }
-                cout << endl;
             }
-            cout << "add matrix1 and matrix2" << endl;
-            
+
             return out;
         }
 
         // 4. Multiply two matrices (operator overloading for *)
         Matrix operator*(const Matrix& other) const{
             Matrix out;
-            cout << "multiply matrix1 and matrix2" << endl;
+            int multSum;
+            
+            // iterate through each index of matricies
+            for (int row = 0; row < SIZE; row++){
+                for (int col = 0; col < SIZE; col++){
+                    // sum all of the multiplications
+                    multSum = 0;
+                    // sum everything in row times col
+                    for (int i = 0; i < SIZE; i++){
+                        multSum += data[row][i] * other.data[i][col];
+                    }
+
+                    // assign multSum to output matrix
+                    out.data[row][col] = multSum;
+                }
+            }
+            
             return out;
         }
 
         // 5. Compute the sum of matrix diagonal elements
         int sumOfDiagonals() const{
-            cout << "add diagonals" << endl;
+            int sum = 0;
+            for (int i = 0; i < SIZE; i++){
+                // main diagonal
+                sum += data[i][i];
+
+                // secondary diagonal
+                sum += data[i][SIZE - i - 1];
+            }
+
+            return sum;
         }
 
         // 6. Swap matrix rows
         void swapRows(int row1, int row2){
+            // check valid indicies
             if (!(0 <= row1 < SIZE) || !(0 <= row2 < SIZE)){
                 cerr << "Invalid indicies!" << endl;
                 return;
             }
-            cout << "swap row1 and row2" << endl;
+
+            // clone data[row1] to data[row2]
+            int tempInt;
+            for (int i = 0; i < SIZE; i++){
+                tempInt = data[row1][i];
+                data[row1][i] = data[row2][i];
+                data[row2][i] = tempInt;
+            }
         }
 };
 
@@ -114,27 +159,27 @@ int main() {
     Matrix mat1;
     cout << "Enter values for Matrix 1:" << endl;
     mat1.readFromStdin();
-    cout << "Matrix 1:" << endl;
+    cout << endl << "Matrix 1:" << endl;
     mat1.display();
 
     Matrix mat2;
-    cout << "Enter values for Matrix 2:" << endl;
+    cout << endl << "Enter values for Matrix 2:" << endl;
     mat2.readFromStdin();
-    cout << "Matrix 2:" << endl;
+    cout << endl << "Matrix 2:" << endl;
     mat2.display();
 
-    // Matrix sum = mat1 + mat2;
-    // cout << "Sum of matrices:" << endl;
-    // sum.display();
+    Matrix sum = mat1 + mat2;
+    cout << endl << "Sum of matrices:" << endl;
+    sum.display();
 
     Matrix product = mat1 * mat2;
-    cout << "Product of matrices:" << endl;
+    cout << endl << "Product of matrices:" << endl;
     product.display();
 
-    cout << "Sum of diagonals of Matrix 1: " << mat1.sumOfDiagonals() << endl;
+    cout << endl << "Sum of diagonals of Matrix 1: " << mat1.sumOfDiagonals() << endl;
 
     mat1.swapRows(0, 2);
-    cout << "Matrix 1 after swapping rows:" << endl;
+    cout << endl << "Matrix 1 after swapping rows:" << endl;
     mat1.display();
 
     return 0;
