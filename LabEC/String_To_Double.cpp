@@ -39,12 +39,14 @@ double extractNumeric(const string& str){
     double count = 0;
     bool decimalReached = false;
     bool isNegative = false;
+    bool hasSigned = false;
     double decimalMultiplier = 1;
 
     for(int i = 0; i < str.length(); i++){
         char cur = str[i];
         
         if('0' <= cur && cur <= '9'){
+            hasSigned = true;
             if(!decimalReached){
                 count = count * 10 + (cur - '0');
             }else{
@@ -59,9 +61,18 @@ double extractNumeric(const string& str){
                 return -999999.99;
             }
         }else if(cur == '-'){
-            isNegative = true;
+            if(!hasSigned){
+                isNegative = true;
+                hasSigned = true;
+            }else{
+                return -999999.99;
+            }
         }else if(cur == '+'){
-            // do nothing
+            if(!hasSigned){
+                hasSigned = true;
+            }else{
+                return -999999.99;
+            }
         }else{
             return -999999.99;
         }
